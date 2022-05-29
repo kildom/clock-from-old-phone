@@ -97,7 +97,7 @@
 <body>
     <table cellspacing="0" cellpadding="0">
         <tr>
-            <td id="time" width="450" height="200"><div><div>22:34</div></div></td>
+            <td id="time" width="450" height="200"><div onclick="timeClick()"><div>22:34</div></div></td>
             <td id="events" width="190" height="360" rowspan="3"><div onscroll="scrollCal(this)">
                     <div class="date">piątek, 23 mar.</div>
                     <div class="event">
@@ -162,6 +162,21 @@
         m += ', ' + tyg[date.getDay()];
         document.querySelector('#full-date>div').innerHTML = m;
         setTimeout(updateTime, (61 - date.getSeconds()) * 1000);
+    }
+
+    function timeClick() {
+        if(window.fullScreen || (window.innerWidth == screen.width && window.innerHeight == screen.height)) {
+            // Do normal click
+        } else {            
+            let elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+            }
+        }
     }
 
     updateTime();
