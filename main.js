@@ -231,7 +231,7 @@ async function updateCal() {
     }
     document.querySelector('#events>div').innerHTML = html;
 }
-const miesSkr = 'sty.,lut.,mar.,kwi.,maj.,cze.,lip.,wrz.,paź.,gru.'.split(',');
+const miesSkr = 'sty.,lut.,mar.,kwi.,maj.,cze.,lip.,sie.,wrz.,paź.,lis.,gru.'.split(',');
 const tygSkr = '<span class="nie">nie.</span>,pon.,wto.,śro.,czw.,pią.,<span class="sob">sob.</span>'.split(',');
 
 function formatDate(date) {
