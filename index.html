@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+<head>
+<title>Zegar</title>
+<meta name="viewport" content="width=640, initial-scale=1">
+<script src="ical.js"></script>
+<script src="main.js"></script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Teko:wght@300&display=swap');
+    body {
+        background-color: black;
+        color: rgb(255, 255, 255);
+        font-family: sans-serif;
+        padding: 0px;
+        margin: 0px;
+        font-size: 14px;
+    }
+    #timess { background-color: red ;}
+    #time>div {
+        top: -170px;
+        position: relative;
+        border: 1px solid green;
+        height: 20px;
+    }
+    #time>div>div {
+        width: 450px;
+        position: absolute;
+        font-size: 280px;
+        text-align: center;
+        font-family: 'Teko', sans-serif;
+    }
+    #day>div {
+        font-size: 100px;
+        padding: 0px;
+        text-align: center;
+    }
+    #month>div {
+        font-size: 30px;
+        padding: 0px;
+        text-align: center;
+    }
+    .event {
+        display: flex;
+        margin: 6px 0px;
+    }
+    .event>.time {
+        flex: 0 0 auto;
+        width: 45px;
+        text-align: right;
+        padding-right: 5px;
+        color: rgb(97 102 129)
+    }
+    .event>.desc {
+        flex: 1 1 auto;
+        color: #b1b1b1;
+    }
+    .date {
+        text-align: center;
+        color: #798dc5;
+        background-color: #0b1f25;
+        padding: 4px;
+        margin: 10px 0px 2px 0px;
+        border-top: 1px solid #4f5c7e;
+    }
+    td#events {
+        vertical-align: top;
+    }
+    #full-date { ssackground-color: red;}
+    #full-date>div {
+        padding: 0px 20px;
+        font-size: 30px;
+        text-align: center;
+    }
+    #full-date .sob {
+        color: #707fff;
+    }
+    #full-date .nie {
+        color: #ff8170;
+    }
+    #events>div {
+        height: 360px;
+        overflow-y: scroll;
+        overflow-x: auto;
+    }
+    .day-event, .no-events {
+        border: 1px solid #081418;
+        background: #040a0c;
+        padding: 2px 4px;
+        border-radius: 3px;
+        margin: 6px 1px;
+        text-align: center;
+        color: #a5a5a5;
+    }
+</style>
+</head>
+<body>
+    <table cellspacing="0" cellpadding="0">
+        <tr>
+            <td id="time" width="450" height="200"><div><div>22:34</div></div></td>
+            <td id="events" width="190" height="360" rowspan="3"><div onscroll="scrollCal(this)">
+                    <div class="date">piątek, 23 mar.</div>
+                    <div class="event">
+                        <div class="time">23:35</div>
+                        <div class="desc">Opis zdarzenia</div>
+                    </div>
+                    <div class="event">
+                        <div class="time">7:00</div>
+                        <div class="desc">Inne zdarzenie z długą nazwą.</div>
+                    </div>
+                    <div class="date">sobota, 25 mar.</div>
+                    <div class="event">
+                        <div class="time">7:00</div>
+                        <div class="desc">Opis zdarzenia</div>
+                    </div>
+            </div></td>
+        </tr>
+        <tr>
+            
+            <td id="full-date" width="140" height="40"><div>
+                23 marca, piątek
+            </div>
+            </td>
+            
+        </tr>
+        <tr>
+            <td id="month" width="450" height="120"><div>
+                
+                <a class="weatherwidget-io" href="https://forecast7.com/pl/50d0719d75/morawica-k-krakowa/" data-days="3" data-theme="dark" >Morawica k Krakowa, Poland</a>
+
+            </div></td>
+            
+        </tr>
+        <tr><td colspan="2">
+
+            
+        </td></tr>
+    </table>
+
+
+<script>
+    !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+    </script>
+
+<script>
+
+    const mies = 'stycznia,lutego,marca,kwietnia,maja,czerwca,lipca,września,października,grudnia'.split(',');
+    const tyg = '<span class="nie">niedziela</span>,poniedziałek,wtorek,środa,czwartek,piątek,<span class="sob">sobota</span>'.split(',');
+
+    function formatTime(date) {
+        let m = date.getMinutes();
+        if (m < 10) m = '0' + m;
+        m = date.getHours() + ':' + m;
+        return m;
+    }
+
+    function updateTime() {
+        let element = document.querySelector('#time>div>div');
+        let date = new Date();
+        element.innerHTML = formatTime(date);
+        m = date.getDate() + ' ' + mies[date.getMonth()];
+        m += ', ' + tyg[date.getDay()];
+        document.querySelector('#full-date>div').innerHTML = m;
+        setTimeout(updateTime, (61 - date.getSeconds()) * 1000);
+    }
+
+    updateTime();
+    setTimeout(() => location.reload(), 1000 * 60 * 30);
+
+    updateCal();
+
+</script>
+</body>
+</html>
