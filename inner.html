@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
 <title>Zegar</title>
-<meta name="viewport" content="width=640, initial-scale=1">
+<meta name="viewport" content="width=838, initial-scale=1">
 <script src="ical.js"></script>
 <script src="main.js"></script>
 <style>
@@ -14,19 +14,21 @@
         font-family: sans-serif;
         padding: 0px;
         margin: 0px;
-        font-size: 14px;
+        font-size: 20px;
+        overflow: hidden;
     }
     #timess { background-color: red ;}
     #time>div {
-        top: -170px;
+        top: -238px;
         position: relative;
-        border: 1px solid green;
+        xborder: 1px solid green;
         height: 20px;
+        width: 530px;
     }
     #time>div>div {
-        width: 450px;
+        width: 530px;
         position: absolute;
-        font-size: 280px;
+        font-size: 380px;
         text-align: center;
         font-family: 'Teko', sans-serif;
     }
@@ -46,7 +48,7 @@
     }
     .event>.time {
         flex: 0 0 auto;
-        width: 45px;
+        width: 50px;
         text-align: right;
         padding-right: 5px;
         color: rgb(97 102 129)
@@ -69,7 +71,7 @@
     #full-date { ssackground-color: red;}
     #full-date>div {
         padding: 0px 20px;
-        font-size: 30px;
+        font-size: 38px;
         text-align: center;
     }
     #full-date .sob {
@@ -79,7 +81,8 @@
         color: #ff8170;
     }
     #events>div {
-        height: 360px;
+        height: 412px;
+        width: 308px;
         overflow-y: scroll;
         overflow-x: auto;
     }
@@ -95,10 +98,12 @@
 </style>
 </head>
 <body>
-    <table cellspacing="0" cellpadding="0">
+    <div id="no-connection" style="display:none; width: 0px; height: 0px;"><div style="position: absolute; top: 180px; left: 630px; width: 100px; height: 100px; color: orange; text-shadow: 0px 0px 8px white; font-size: 200px; z-index: 1000;">⚠</div></div>
+    <!-- 838 x 412 -->
+    <table cellspacing="0" cellpadding="0" border="0">
         <tr>
-            <td id="time" width="450" height="200"><div onclick="timeClick()"><div>22:34</div></div></td>
-            <td id="events" width="190" height="360" rowspan="3"><div onscroll="scrollCal(this)">
+            <td id="time" width="530" height="270"><div onclick="timeClick()"><div>22:34</div></div></td>
+            <td id="events" width="308" height="412" rowspan="3"><div onscroll="scrollCal(this)">
                     <div class="date">piątek, 23 mar.</div>
                     <div class="event">
                         <div class="time">23:35</div>
@@ -117,24 +122,20 @@
         </tr>
         <tr>
             
-            <td id="full-date" width="140" height="40"><div>
+            <td id="full-date" width="520" height="42"><div>
                 23 marca, piątek
             </div>
             </td>
             
         </tr>
         <tr>
-            <td id="month" width="450" height="120"><div>
+            <td id="month" width="520" height="100"><div>
                 
                 <a class="weatherwidget-io" href="https://forecast7.com/pl/50d0719d75/morawica-k-krakowa/" data-days="3" data-theme="dark" >Morawica k Krakowa, Poland</a>
 
             </div></td>
             
         </tr>
-        <tr><td colspan="2">
-
-            
-        </td></tr>
     </table>
 
 
@@ -179,8 +180,33 @@
         }
     }
 
+    async function safeReload() {
+        let timeout = null;
+        try {
+            let controller = new AbortController();
+            let { signal } = controller;
+            timeout = setTimeout(() => controller.abort(), 5000);
+            let response = await fetch('inner.html', { signal });
+            if (response.status != 200) {
+                throw new Error('HTTP status: ' + response.status);
+            }
+            let body = await response.arrayBuffer();
+            if (body.byteLength == 0) {
+                throw new Error('Invalid');
+            }
+            location.reload();
+        } catch (e) {
+            setTimeout(safeReload, 1000 * 60);
+            document.querySelector('#no-connection').style.display = '';
+            console.error(e);
+        };
+        if (timeout !== null) {
+            clearTimeout(timeout);
+        }
+    }
+
     updateTime();
-    setTimeout(() => location.reload(), 1000 * 60 * 30);
+    setTimeout(safeReload, 1000 * 60 * 15);
 
     updateCal();
 
