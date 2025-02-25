@@ -7,7 +7,7 @@
 <script src="ical.js"></script>
 <script src="main.js"></script>
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Teko:wght@300&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
     body {
         background-color: black;
         color: rgb(255, 255, 255);
@@ -17,20 +17,21 @@
         font-size: 20px;
         overflow: hidden;
     }
-    #timess { background-color: red ;}
+    #time { xbackground-color: red ;}
     #time>div {
-        top: -238px;
+        top: -175px;
         position: relative;
-        xborder: 1px solid green;
-        height: 20px;
-        width: 530px;
+        border: 1px solid green;
+        height: 0px;
+        width: 460px;
+        background-color: #ff8170;
     }
     #time>div>div {
-        width: 530px;
+        width: 460px;
         position: absolute;
-        font-size: 380px;
         text-align: center;
-        font-family: 'Teko', sans-serif;
+        font-family: 'Oswald', sans-serif;
+        font-size: 220px;
     }
     #day>div {
         font-size: 100px;
@@ -71,18 +72,20 @@
     #full-date { ssackground-color: red;}
     #full-date>div {
         padding: 0px 20px;
-        font-size: 38px;
+        font-size: 30px;
         text-align: center;
+        color: #858585;
     }
     #full-date .sob {
-        color: #707fff;
+        color: #6268a0;
     }
     #full-date .nie {
-        color: #ff8170;
+        color: #a1736d;
     }
     #events>div {
-        height: 412px;
-        width: 308px;
+        font-size: 14px;
+        height: 342px;
+        width: 178px;
         overflow-y: scroll;
         overflow-x: auto;
     }
@@ -98,12 +101,18 @@
 </style>
 </head>
 <body>
-    <div id="no-connection" style="display:none; width: 0px; height: 0px;"><div style="position: absolute; top: 180px; left: 630px; width: 100px; height: 100px; color: orange; text-shadow: 0px 0px 8px white; font-size: 200px; z-index: 1000;">⚠</div></div>
-    <!-- 838 x 412 -->
+    <div id="no-connection" style="display:none; width: 0px; height: 0px;">
+        <div style="position: absolute; top: 190px; left: -20px; color: orange; text-shadow: 0px 0px 8px white; font-size: 140px; z-index: 1000;">⚠</div>
+    </div>
+    <div id="no-power" style="display:none; width: 0px; height: 0px;">
+        <div style="position: absolute; top: 220px; left: 420px; color: orange; text-shadow: 0px 0px 8px white; font-size: 90px; z-index: 1000;">🔋</div>
+        <div id="bat" style="position: absolute; top: 270px; left: 445px; color: #ffffff; text-shadow: 0px 0px 8px white; font-size: 30px; z-index: 1001; text-shadow: 1px 1px 4px #000;">59</div>
+    </div>
+    <!-- 638 x 412 -->
     <table cellspacing="0" cellpadding="0" border="0">
         <tr>
-            <td id="time" width="530" height="270"><div onclick="timeClick()"><div>22:34</div></div></td>
-            <td id="events" width="308" height="412" rowspan="3"><div onscroll="scrollCal(this)">
+            <td id="time" width="460" height="200"><div onclick="timeClick()"><div>22:34</div></div></td>
+            <td id="events" width="178" height="200" rowspan="3"><div onscroll="scrollCal(this)">
                     <div class="date">piątek, 23 mar.</div>
                     <div class="event">
                         <div class="time">23:35</div>
@@ -122,19 +131,20 @@
         </tr>
         <tr>
             
-            <td id="full-date" width="520" height="42"><div>
-                23 marca, piątek
+            <td id="full-date" width="450" height="42"><div>
+                23 października, poniedziałek
             </div>
             </td>
             
         </tr>
         <tr>
-            <td id="month" width="520" height="100"><div>
-                
-                <a class="weatherwidget-io" href="https://forecast7.com/pl/50d0719d75/morawica-k-krakowa/" data-days="3" data-theme="dark" >Morawica k Krakowa, Poland</a>
-
+            <td id="month" width="450" height="100"><div>
+                <div style="width: 450px; text-align: center; overflow: auto;">
+                    <div style="width: 650px; text-align: center; position: relative; left: -25px;">
+                        <a class="weatherwidget-io" href="https://forecast7.com/pl/50d0719d75/morawica-k-krakowa/" data-days="7" data-theme="dark" >Morawica k Krakowa, Poland</a>
+                    </div>
+                </div>
             </div></td>
-            
         </tr>
     </table>
 
@@ -165,19 +175,39 @@
         setTimeout(updateTime, (61 - date.getSeconds()) * 1000);
     }
 
+    let battery;
+
+    function updateBattery() {
+        if (!battery.charging) {
+            document.querySelector('#no-power').style.display = '';
+            document.querySelector('#bat').innerHTML = Math.round(battery.level * 100);
+        } else {
+            document.querySelector('#no-power').style.display = 'none';
+        }
+    }
+
+    async function initBattery() {
+        battery = await navigator.getBattery();
+        battery.addEventListener('chargingchange', updateBattery)
+        setInterval(updateBattery, 1000 * 60);
+        updateBattery();
+    }
+
     function timeClick() {
-        if(window.fullScreen || (window.innerWidth == screen.width && window.innerHeight == screen.height)) {
+        window.parent._clicked();
+        /*if(window.fullScreen || (window.innerWidth == screen.width && window.innerHeight == screen.height)) {
             // Do normal click
         } else {            
             let elem = document.documentElement;
             if (elem.requestFullscreen) {
                 elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) { /* Safari */
+            } else if (elem.webkitRequestFullscreen) {
                 elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) { /* IE11 */
+            } else if (elem.msRequestFullscreen) {
                 elem.msRequestFullscreen();
             }
-        }
+            window.parent._clicked();
+        }*/
     }
 
     async function safeReload() {
@@ -186,7 +216,15 @@
             let controller = new AbortController();
             let { signal } = controller;
             timeout = setTimeout(() => controller.abort(), 5000);
-            let response = await fetch('inner.html', { signal });
+            let response = await fetch('inner.html?' + Math.random() + Math.random() + Date.now(), { 
+                signal,
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                }
+             });
             if (response.status != 200) {
                 throw new Error('HTTP status: ' + response.status);
             }
@@ -196,7 +234,7 @@
             }
             location.reload();
         } catch (e) {
-            setTimeout(safeReload, 1000 * 60);
+            setTimeout(safeReload, 1000 * 30);
             document.querySelector('#no-connection').style.display = '';
             console.error(e);
         };
@@ -205,11 +243,17 @@
         }
     }
 
-    updateTime();
-    setTimeout(safeReload, 1000 * 60 * 15);
+    let reloadTime = 1000 * 60 * 15;
+    //reloadTime = 1000 * 10;
 
+    updateTime();
+    setTimeout(safeReload, reloadTime);
+    initBattery();
     updateCal();
 
 </script>
+
+  
+
 </body>
 </html>

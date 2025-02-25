@@ -17,10 +17,34 @@
 </head>
 
 <body>
+
+    <video id="hiddenVideo" playsinline loop style="display: none;">
+        <source src="v.mp4" type="video/mp4">
+    </video>
+
     <!-- 838 x 412 -->
-    <iframe src="inner.html" style="margin: 0px; padding: 0px; border: none; width: 838px; height: 412px; overflow: hidden;"></iframe>
+    <iframe id="myIframe" src="inner.html"
+        style="margin: 0px; padding: 0px; border: none; width: 638px; height: 352px; overflow: hidden;"></iframe>
     <script>
-        //setTimeout(() => location.reload(), 1000 * 60 * 30 / 60 / 6);
+        setInterval(() => {
+            //document.getElementById("myIframe").contentWindow.location.reload();
+        }, 3000);
+
+        window._clicked = function () {
+            if (window.fullScreen || (window.innerWidth == screen.width && window.innerHeight == screen.height)) {
+                // Do normal click
+            } else {
+                let elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) { /* Safari */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE11 */
+                    elem.msRequestFullscreen();
+                }
+            }
+            document.getElementById('hiddenVideo').play();
+        }
     </script>
 </body>
 
